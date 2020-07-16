@@ -1,9 +1,10 @@
 import setuptools
 
-def _read_me() -> str:
-    with open("README.md", "rt", encoding="utf8") as fh:
-        readme = fh.read()
-    return readme
+with open("README.md", "rt", encoding='utf8') as fh:
+    long_description = fh.read()
+
+with open("requirements.txt", "rt", encoding='utf8') as fh:
+    requirements = fh.read().split('\n')
 
 
 setuptools.setup(
@@ -21,4 +22,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.5',
+    install_requires=requirements,
 )
