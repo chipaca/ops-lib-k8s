@@ -9,7 +9,7 @@ python:
     - "3.8"
 
 install:
-    - pip install -r test-requirements.txt
+    - pip install -r requirements-dev.txt
 
 script:
     - python -m black --line-length=99 --check --verbose k8s/ test/
