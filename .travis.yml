@@ -3,15 +3,15 @@ dist: bionic
 language: python
 
 python:
+    - "3.5"
     - "3.6"
     - "3.7"
     - "3.8"
 
 install:
     - pip install -r test-requirements.txt
-    - pip install coveralls
 
 script:
-    - python -m black --line-length=99 --check --verbose .
+    - python -m black --line-length=99 --check --verbose k8s/ test/
     - python -m pytest -v
 
