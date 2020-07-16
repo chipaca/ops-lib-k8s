@@ -1,3 +1,4 @@
+import sys
 import json
 import http.client
 import logging
@@ -42,7 +43,12 @@ class APIServer:
         with open("/var/run/secrets/kubernetes.io/serviceaccount/token") as token_file:
             kube_token = token_file.read()
 
-        ssl_context = ssl.SSLContext()
+        # drop this when dropping support for 3.5
+        if sys.version_info < (3, 6):
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        else:
+            ssl_context = ssl.SSLContext()
+
         ssl_context.load_verify_locations("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
 
         headers = {"Authorization": "Bearer {}".format(kube_token)}
