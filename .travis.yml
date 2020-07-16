@@ -3,15 +3,19 @@ dist: bionic
 language: python
 
 python:
-    - "3.5"
-    - "3.6"
-    - "3.7"
-    - "3.8"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
+
+addons:
+  snaps:
+    - name: black
+      channel: beta
 
 install:
-    - pip install -r requirements-dev.txt
-    - snap install --beta black
+  - pip install -r requirements-dev.txt
 
 script:
-    - black --line-length=99 --check --verbose k8s/ test/
-    - python -m pytest -v
+  - black --line-length=99 --check --verbose k8s/ test/
+  - python -m pytest -v
