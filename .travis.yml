@@ -12,8 +12,6 @@ install:
     - pip install coveralls
 
 script:
-    - flake8 --config=.flake8
-    - pytest -c pytest.ini
+    - python -m black --line-length=99 --check --verbose .
+    - python -m pytest -v
 
-after_success:
-    - coveralls

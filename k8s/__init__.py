@@ -1,6 +1,7 @@
 import json
 import http.client
 import logging
+
 logger = logging.getLogger()
 import ssl
 
@@ -8,18 +9,20 @@ import ssl
 def get_pod_status(juju_model, juju_app, juju_unit):
     namespace = juju_model
 
-    path = '/api/v1/namespaces/{}/pods?' \
-           'labelSelector=juju-app={}'.format(namespace, juju_app)
+    path = "/api/v1/namespaces/{}/pods?" "labelSelector=juju-app={}".format(namespace, juju_app)
 
     api_server = APIServer()
     response = api_server.get(path)
     status_dict = None
 
-    if response.get('kind', '') == 'PodList' and response['items']:
+    if response.get("kind", "") == "PodList" and response["items"]:
         status_dict = next(
-            (i for i in response['items']
-             if i['metadata']['annotations'].get('juju.io/unit') == juju_unit),
-            None
+            (
+                i
+                for i in response["items"]
+                if i["metadata"]["annotations"].get("juju.io/unit") == juju_unit
+            ),
+            None,
         )
 
     return PodStatus(status_dict)
@@ -33,22 +36,18 @@ class APIServer:
     """
 
     def get(self, path):
-        return self.request('GET', path)
+        return self.request("GET", path)
 
     def request(self, method, path):
-        with open("/var/run/secrets/kubernetes.io/serviceaccount/token") \
-                as token_file:
+        with open("/var/run/secrets/kubernetes.io/serviceaccount/token") as token_file:
             kube_token = token_file.read()
 
         ssl_context = ssl.SSLContext()
-        ssl_context.load_verify_locations(
-            '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt')
+        ssl_context.load_verify_locations("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
 
-        headers = {
-            'Authorization': 'Bearer {}'.format(kube_token)
-        }
+        headers = {"Authorization": "Bearer {}".format(kube_token)}
 
-        host = 'kubernetes.default.svc'
+        host = "kubernetes.default.svc"
         conn = http.client.HTTPSConnection(host, context=ssl_context)
         logger.debug("{} {}/{}".format(method, host, path))
         conn.request(method=method, url=path, headers=headers)
@@ -57,7 +56,6 @@ class APIServer:
 
 
 class PodStatus:
-
     def __init__(self, status_dict):
         self._status = status_dict
 
@@ -68,11 +66,11 @@ class PodStatus:
 
         return next(
             (
-                condition['status'] == "True" for condition
-                in self._status['status']['conditions']
-                if condition['type'] == 'ContainersReady'
+                condition["status"] == "True"
+                for condition in self._status["status"]["conditions"]
+                if condition["type"] == "ContainersReady"
             ),
-            False
+            False,
         )
 
     @property
@@ -80,7 +78,7 @@ class PodStatus:
         if not self._status:
             return False
 
-        return self._status['status']['phase'] == 'Running'
+        return self._status["status"]["phase"] == "Running"
 
     @property
     def is_unknown(self):
