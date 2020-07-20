@@ -1,6 +1,8 @@
+# Copyright 2020 Canonical Ltd.
+# Licensed under the Apache License, Version 2.0; see LICENCE file for details.
+
 import io
 import json
-import sys
 import unittest
 from unittest.mock import patch
 from uuid import uuid4
@@ -44,7 +46,7 @@ class GetPodStatusTest(unittest.TestCase):
 
 
 class APIServerTest(unittest.TestCase):
-    @patch("k8s.open", create=True)
+    @patch("pathlib.Path.open", create=True)
     @patch("k8s.ssl.SSLContext", autospec=True, spec_set=True)
     @patch("k8s.http.client.HTTPSConnection", autospec=True, spec_set=True)
     def test__get__loads_json_string_successfully(
