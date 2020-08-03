@@ -23,9 +23,9 @@ def get_pod_status(juju_model, juju_app, juju_unit):
     status_dict = None
 
     if response.get("kind", "") == "PodList" and response["items"]:
-        for i in response["items"]:
-            if i["metadata"]["annotations"].get("juju.io/unit") == juju_unit:
-                status_dict = i
+        for item in response["items"]:
+            if item["metadata"]["annotations"].get("juju.io/unit") == juju_unit:
+                status_dict = item
                 break
 
     return PodStatus(status_dict)
@@ -38,13 +38,13 @@ class APIServer:
     the pod.
     """
 
-    _dir = Path("/var/run/secrets/kubernetes.io/serviceaccount")
+    _path = Path("/var/run/secrets/kubernetes.io/serviceaccount").__truediv__
 
     def get(self, path):
         return self.request("GET", path)
 
     def request(self, method, path):
-        with (self._dir / "token").open("rt", encoding="utf8") as token_file:
+        with self._path("token").open("rt", encoding="utf8") as token_file:
             kube_token = token_file.read()
 
         # drop this when dropping support for 3.5
@@ -53,7 +53,7 @@ class APIServer:
         else:
             ssl_context = ssl.SSLContext()
 
-        ssl_context.load_verify_locations(str(self._dir / "ca.crt"))
+        ssl_context.load_verify_locations(str(self._path("ca.crt")))
 
         headers = {"Authorization": "Bearer {}".format(kube_token)}
 
