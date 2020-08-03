@@ -48,7 +48,7 @@ try:
         long_description_content_type="text/markdown",
         url="https://github.com/chipaca/ops-lib-k8s",
         packages=find_packages(),
-        classifiers=["Programming Language :: Python :: 3", "Operating System :: OS Independent",],
+        classifiers=["Programming Language :: Python :: 3", "Operating System :: OS Independent"],
         python_requires=">=3.5",
         install_requires=requirements,
     )
