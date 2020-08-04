@@ -1,6 +1,8 @@
+# Copyright 2020 Canonical Ltd.
+# Licensed under the Apache License, Version 2.0; see LICENCE file for details.
+
 import io
 import json
-import sys
 import unittest
 from unittest.mock import patch
 from uuid import uuid4
