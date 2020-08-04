@@ -31,10 +31,10 @@ try:
         fh.write(
             dedent(
                 """
-            # this is a generated file
+                # this is a generated file
 
-            version = {!r}
-            """
+                version = {!r}
+                """
             ).format(version)
         )
 
