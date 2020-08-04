@@ -11,6 +11,7 @@ import unittest
 from unittest.mock import patch
 
 from flake8.api.legacy import get_style_guide
+import ops.lib
 
 from k8s import __version__
 
@@ -72,3 +73,8 @@ class TestInfra(unittest.TestCase):
         proc = subprocess.run(cmd, stdout=subprocess.PIPE)
         output = proc.stdout.decode("utf8")
         assert output.strip() == __version__
+
+    def test_ops_lib_use(self):
+        # just check it works :)
+        k8s = ops.lib.use("k8s", 0, "chipaca@canonical.com")
+        assert k8s.LIBAPI == 0
