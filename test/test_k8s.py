@@ -46,7 +46,7 @@ class GetPodStatusTest(unittest.TestCase):
 
 
 class APIServerTest(unittest.TestCase):
-    @patch("pathlib.Path.open", create=True)
+    @patch("k8s.open", create=True)
     @patch("k8s.ssl.SSLContext", autospec=True, spec_set=True)
     @patch("k8s.http.client.HTTPSConnection", autospec=True, spec_set=True)
     def test__get__loads_json_string_successfully(

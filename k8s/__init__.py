@@ -4,7 +4,6 @@
 import http.client
 import json
 import logging
-from pathlib import Path
 import ssl
 import sys
 
@@ -38,13 +37,14 @@ class APIServer:
     the pod.
     """
 
-    _path = Path("/var/run/secrets/kubernetes.io/serviceaccount").__truediv__
+    _SERVICE_ACCOUNT_CA = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    _SERVICE_ACCOUNT_TOKEN = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
     def get(self, path):
         return self.request("GET", path)
 
     def request(self, method, path):
-        with self._path("token").open("rt", encoding="utf8") as token_file:
+        with open(self._SERVICE_ACCOUNT_TOKEN, "rt", encoding="utf8") as token_file:
             kube_token = token_file.read()
 
         # drop this when dropping support for 3.5
@@ -53,7 +53,7 @@ class APIServer:
         else:
             ssl_context = ssl.SSLContext()
 
-        ssl_context.load_verify_locations(str(self._path("ca.crt")))
+        ssl_context.load_verify_locations(self._SERVICE_ACCOUNT_CA)
 
         headers = {"Authorization": "Bearer {}".format(kube_token)}
 
