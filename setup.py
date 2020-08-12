@@ -3,7 +3,7 @@
 
 from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from textwrap import dedent
 
 
@@ -47,7 +47,7 @@ try:
         long_description=long_description,
         long_description_content_type="text/markdown",
         url="https://github.com/chipaca/ops-lib-k8s",
-        packages=find_packages(),
+        packages=find_namespace_packages(),
         classifiers=["Programming Language :: Python :: 3", "Operating System :: OS Independent"],
         python_requires=">=3.5",
         install_requires=requirements,
