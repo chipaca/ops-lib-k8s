@@ -4,6 +4,7 @@
 import io
 import json
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -33,6 +34,18 @@ class GetPodStatusTest(unittest.TestCase):
         assert type(pod_status) == PodStatus
 
     @patch("k8s.APIServer", autospec=True, spec_set=True)
+    def test_works(self, mock_api_server_cls):
+        mock_api_server = mock_api_server_cls.return_value
+        with (Path(__file__).parent / "a_pod_status.json").open("rt", encoding="utf8") as f:
+            mock_api_server.get.return_value = json.load(f)
+
+        pod_status = k8s.get_pod_status("my-model", "my-app", "charm-k8s-cassandra/0")
+
+        assert not pod_status.is_unknown
+        assert pod_status.is_running
+        assert pod_status.is_ready
+
+    @patch("k8s.APIServer", autospec=True, spec_set=True)
     def test__returns_PodStatus_even_if_resource_not_found(self, mock_api_server_cls):
         # Setup
         mock_api_server = mock_api_server_cls.return_value
@@ -58,6 +71,7 @@ class APIServerTest(unittest.TestCase):
         mock_open.return_value = mock_token_file
         mock_response_dict = {}
         mock_response_json = io.StringIO(json.dumps(mock_response_dict))
+        mock_response_json.status = 200
 
         mock_conn = mock_https_connection_cls.return_value
         mock_conn.getresponse.return_value = mock_response_json
@@ -82,7 +96,7 @@ class PodStatusTest(unittest.TestCase):
         }
 
         # Exercise
-        pod_status = PodStatus(status_dict=status_dict)
+        pod_status = PodStatus(**status_dict)
 
         # Assert
         assert not pod_status.is_unknown
@@ -100,7 +114,7 @@ class PodStatusTest(unittest.TestCase):
         }
 
         # Exercise
-        pod_status = PodStatus(status_dict=status_dict)
+        pod_status = PodStatus(**status_dict)
 
         # Assert
         assert not pod_status.is_unknown
@@ -118,7 +132,7 @@ class PodStatusTest(unittest.TestCase):
         }
 
         # Exercise
-        pod_status = PodStatus(status_dict=status_dict)
+        pod_status = PodStatus(**status_dict)
 
         # Assert
         assert not pod_status.is_unknown
@@ -127,7 +141,7 @@ class PodStatusTest(unittest.TestCase):
 
     def test__status_is_unknown(self):
         # Exercise
-        pod_status = PodStatus(status_dict=None)
+        pod_status = PodStatus()
 
         # Assert
         assert pod_status.is_unknown
