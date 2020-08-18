@@ -91,9 +91,12 @@ class PodStatus(dict):
         if not self:
             return False
 
-        for condition in self["status"]["conditions"]:
-            if condition["type"] == "ContainersReady":
-                return condition["status"] == "True"
+        try:
+            for condition in self["status"]["conditions"]:
+                if condition["type"] == "ContainersReady":
+                    return condition["status"] == "True"
+        except KeyError:
+            pass
 
         return False
 
@@ -102,7 +105,10 @@ class PodStatus(dict):
         if not self:
             return False
 
-        return self["status"]["phase"] == "Running"
+        try:
+            return self["status"]["phase"] == "Running"
+        except KeyError:
+            return False
 
     @property
     def is_unknown(self):
