@@ -22,9 +22,10 @@ class GetPodStatusTest(unittest.TestCase):
     def get_harness(self, charm_name=None):
         class MyCharm(CharmBase):
             pass
+
         if charm_name is None:
             charm_name = uuid4()
-        harness = Harness(MyCharm, meta='{{name: {!r}}}'.format(charm_name))
+        harness = Harness(MyCharm, meta="{{name: {!r}}}".format(charm_name))
         harness.set_model_name(uuid4())
         self.addCleanup(harness.cleanup)
         harness.begin()
