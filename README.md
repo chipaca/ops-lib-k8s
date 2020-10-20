@@ -10,7 +10,7 @@ Based on work initially done by Mark Maglana.
 
 The best way to use it is via the “opslib” mechanism,
 
-    improt ops.lib
+    import ops.lib
 
     k8s = ops.lib.use("k8s", 0, "chipaca@canonical.com")
 
